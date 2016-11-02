@@ -147,3 +147,55 @@ $RGs = Run-Webhook -body $RGBody -webhook $webhookRGs
 
 $SelectedRG = $rgs | ogv -PassThru
 $SelectedRG
+
+#region VNets
+$webhookvNets = "https://s8events.azure-automation.net/webhooks?token=m0TGyPUBCrtiQ2fbTHk4m2Blhus0DQeJLr%2fYeoN3Qk0%3d"
+
+$vNetIDs = @(
+             @{ user="SourceMig"; subid=$selectedSourceSub.SubscriptionId; CloudService=$selectedSourceVM.CloudService}
+             )
+$vNetBody = ConvertTo-Json -InputObject $vNetIDs
+
+$vNets = Run-Webhook -body $vNetBody -webhook $webhookvNets
+#endregion
+
+$selectedvNet = $vNets | ? {$_.ResourceType -eq 'Microsoft.ClassicNetwork/virtualNetworks'}
+$selectedvNet
+$selectedVStorage = $vNets | ? {$_.ResourceType -eq 'Microsoft.ClassicStorage/storageAccounts'}
+$selectedVStorage
+
+#region NewRG
+$webhookNewRG = "https://s8events.azure-automation.net/webhooks?token=EFBHW1RUlIHEqEKtg%2bglAO%2fs3%2fdDJTD5KqdvrPovaF4%3d"
+
+$NewRgIDs =  @(
+             @{ user="targetMig"; subid=$selectedtargetsub.SubscriptionId; RGName=$selectedSourceVM.CloudService; region=$selectedRegion.Location}
+             )
+$NewRgBody = ConvertTo-Json -InputObject $NewRgIDs
+
+$newrg = Run-Webhook -body $NewRgBody -webhook $webhookNewRG
+
+#endregion
+
+#region NewStor
+$webhookNewStor = "https://s8events.azure-automation.net/webhooks?token=AjZVAc3QPQtfa6jzJfH3L513KYmpltQNNs9bqpYe%2frQ%3d"
+
+$NewStorIDs = @(
+             @{ user="targetMig"; subid=$selectedtargetsub.SubscriptionId; RGName=$selectedSourceVM.CloudService; region=$selectedRegion.Location; StoreType='Standard_GRS'; StoreName="demostorage3563"}
+             )
+$NewStorBody = ConvertTo-Json -InputObject $NewStorIDs
+
+$newStor = Run-Webhook -body $NewStorBody -webhook $webhookNewStor
+
+#endregion
+
+#region StorageKeys
+$webhookstoragekeys = "https://s8events.azure-automation.net/webhooks?token=%2bW8ZgLRQR15EYdnZha7xeA%2f1g4%2ffn9%2fIG9M7ri0Bb6w%3d"
+
+$StoragekeysIDs = @(
+             @{ user="targetMig"; subid=$selectedtargetsub.SubscriptionId; RGName=$selectedSourceVM.CloudService; region=$selectedRegion.Location; StoreName="demostorage3563"}
+             )
+$StoragekeysBody = ConvertTo-Json -InputObject $StoragekeysIDs
+
+$StorageKeys = Run-Webhook -body $StoragekeysBody -webhook $webhookstoragekeys
+
+#endregion
