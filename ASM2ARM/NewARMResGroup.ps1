@@ -4,7 +4,7 @@ workflow NewARMResGroup
         if ($WebHookData -ne $null){
             $reqdatabody = $WebHookData.RequestBody
         $req = convertfrom-json $reqdatabody
-        $credname = $req.name
+        $credname = $req.user
         $subid = $req.subid
         $region = $req.region
         $resGrpName = $req.RGName
