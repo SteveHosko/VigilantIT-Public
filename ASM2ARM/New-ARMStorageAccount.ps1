@@ -13,7 +13,8 @@ param    ([object]$WebHookData)
             $Creds = Get-AutomationPSCredential -Name $credname 
             $null = Login-AzureRmAccount -Environment (Get-AzureRmEnvironment -name AzureCloud) -Credential $Creds
             $null = Get-AzureRmSubscription -SubscriptionId $subID
-            $stor = New-AzureRmStorageAccount -ResourceGroupName $resourceGroupName -Name $TargetStorageName -Type $TargetStorageType -Location $region
+            New-AzureRmStorageAccount -ResourceGroupName $resGrpName -Name $targetStoreName -Type $targetStoreType -Location $region
+            $stor = (Get-AzureRmStorageAccount -ResourceGroupName $resGrpName -Name $targetStoreName).Context
             $out = convertto-json $stor
             write-output $out
         }
